@@ -44,7 +44,7 @@ class RootSIFT:
 
 
 class HOGDescriptor:
-    def __init__(self, orientations=9, pixels_per_cell=(16, 16), cells_per_block=(2, 2)):
+    def __init__(self, orientations=9, pixels_per_cell=(32, 32), cells_per_block=(2, 2)):
         self.orientations = orientations
         self.pixels_per_cell = pixels_per_cell
         self.cells_per_block = cells_per_block
@@ -212,7 +212,6 @@ def main():
             st.sidebar.metric(
                 "Model Accuracy", 
                 f"{results['mean_accuracy']:.1%}",
-                delta=f"±{results.get('std_accuracy', 0):.1%}"
             )
     
     col1, col2 = st.columns([1, 1])
