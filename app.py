@@ -6,29 +6,26 @@ import time
 from skimage.feature import hog, local_binary_pattern
 
 st.set_page_config(
-    page_title="Rock Paper Scissors Classifier",
-    page_icon="✊📄✂️",
+    page_title="Bisindo Sign Language Classifier",
+    page_icon="🤟",
     layout="wide"
 )
 
-CLASSES = ['rock', 'scissors', 'paper', 'background']
-N_CLUSTERS = 200
-MAX_FEATURES = 500
+CLASSES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+N_CLUSTERS = 100  # Match notebook configuration
+MAX_FEATURES = 150  # Match notebook configuration
 TARGET_SIZE = (256, 256)
 
-CLASS_EMOJIS = {
-    'rock': '🪨',
-    'scissors': '✂️',
-    'paper': '📄',
-    'background': '🚪'
-}
+# Generate emojis for A-Z letters
+CLASS_EMOJIS = {letter: f'🔤' for letter in CLASSES}
 
-CLASS_COLORS = {
-    'rock': '#e74c3c',
-    'scissors': '#3498db',
-    'paper': '#2ecc71',
-    'background': '#95a5a6'
-}
+# Generate colors for A-Z letters (cycling through color palette)
+color_palette = [
+    '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c',
+    '#e67e22', '#34495e', '#f1c40f', '#16a085', '#27ae60', '#2980b9',
+    '#8e44ad', '#c0392b', '#d35400', '#7f8c8d'
+]
+CLASS_COLORS = {CLASSES[i]: color_palette[i % len(color_palette)] for i in range(len(CLASSES))}
 
 class RootSIFT:
     def __init__(self, sift=None):
@@ -97,6 +94,7 @@ def load_models():
                 model_data = pickle.load(f)
             models[name] = {
                 'svc': model_data['svc'],
+                'scaler': model_data.get('scaler', None),
                 'kmeans': model_data.get('kmeans', None),
                 'results': model_data.get('results', {})
             }
@@ -141,6 +139,7 @@ def extract_keypoints_image(img_resized, gray_blur, descriptor, desc_name):
 
 def classify_image(gray_blur, descriptor, model_data, desc_name):
     svc = model_data['svc']
+    scaler = model_data.get('scaler', None)
     kmeans = model_data['kmeans']
     
     if desc_name in ['HOG', 'LBP']:
@@ -148,6 +147,10 @@ def classify_image(gray_blur, descriptor, model_data, desc_name):
     else:
         _, desc = descriptor.detectAndCompute(gray_blur, None)
         features = create_histogram(desc, kmeans, N_CLUSTERS)
+    
+    # Apply scaling if scaler exists
+    if scaler is not None:
+        features = scaler.transform([features])[0]
     
     probs = svc.predict_proba([features])[0]
     pred_idx = np.argmax(probs)
@@ -173,7 +176,8 @@ def display_probability_bars(prob_dict):
 
 
 def main():
-    st.title("Rock Paper Scissors Classifier")
+    st.title("🤟 Bisindo Sign Language Classifier (A-Z)")
+    st.markdown("Classify Indonesian Sign Language hand gestures")
     st.markdown("---")
     
     with st.spinner("Loading models..."):
@@ -221,7 +225,7 @@ def main():
         uploaded_file = st.file_uploader(
             "Choose an image...",
             type=['jpg', 'jpeg', 'png', 'bmp'],
-            help="Upload a hand gesture image (rock, paper, or scissors)"
+            help="Upload a hand gesture image (A-Z sign language)"
         )
         
         use_camera = st.checkbox("Use Camera Instead")
@@ -314,7 +318,7 @@ def main():
     
     else:
         with result_placeholder.container():
-            st.info("Upload an image")
+            st.info("📸 Upload an image or use camera to classify a sign language gesture (A-Z)")
 
 if __name__ == "__main__":
     main()
