@@ -265,7 +265,7 @@ def main():
         with result_placeholder.container():
             st.markdown(f"""
             <div style="text-align: center; padding: 20px; background-color: {CLASS_COLORS[pred_class]}20; border-radius: 10px; border: 2px solid {CLASS_COLORS[pred_class]};">
-                <h1 style="color: {CLASS_COLORS[pred_class]};">{CLASSES[pred_class]} {pred_class.upper()}</h1>
+                <h1 style="color: {CLASS_COLORS[pred_class]};">{pred_class} {pred_class.upper()}</h1>
                 <h2>{confidence:.1%} Confidence</h2>
             </div>
             """, unsafe_allow_html=True)
