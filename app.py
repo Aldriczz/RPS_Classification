@@ -12,14 +12,10 @@ st.set_page_config(
 )
 
 CLASSES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-N_CLUSTERS = 100  # Match notebook configuration
-MAX_FEATURES = 150  # Match notebook configuration
+N_CLUSTERS = 100  
+MAX_FEATURES = 150  
 TARGET_SIZE = (256, 256)
 
-# Generate emojis for A-Z letters
-CLASS_EMOJIS = {letter: f'🔤' for letter in CLASSES}
-
-# Generate colors for A-Z letters (cycling through color palette)
 color_palette = [
     '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c',
     '#e67e22', '#34495e', '#f1c40f', '#16a085', '#27ae60', '#2980b9',
@@ -148,7 +144,6 @@ def classify_image(gray_blur, descriptor, model_data, desc_name):
         _, desc = descriptor.detectAndCompute(gray_blur, None)
         features = create_histogram(desc, kmeans, N_CLUSTERS)
     
-    # Apply scaling if scaler exists
     if scaler is not None:
         features = scaler.transform([features])[0]
     
@@ -176,7 +171,7 @@ def display_probability_bars(prob_dict):
 
 
 def main():
-    st.title("🤟 Bisindo Sign Language Classifier (A-Z)")
+    st.title("Bisindo Sign Language Classifier (A-Z)")
     st.markdown("Classify Indonesian Sign Language hand gestures")
     st.markdown("---")
     
@@ -270,7 +265,7 @@ def main():
         with result_placeholder.container():
             st.markdown(f"""
             <div style="text-align: center; padding: 20px; background-color: {CLASS_COLORS[pred_class]}20; border-radius: 10px; border: 2px solid {CLASS_COLORS[pred_class]};">
-                <h1 style="color: {CLASS_COLORS[pred_class]};">{CLASS_EMOJIS[pred_class]} {pred_class.upper()}</h1>
+                <h1 style="color: {CLASS_COLORS[pred_class]};">{CLASSES[pred_class]} {pred_class.upper()}</h1>
                 <h2>{confidence:.1%} Confidence</h2>
             </div>
             """, unsafe_allow_html=True)
@@ -318,7 +313,7 @@ def main():
     
     else:
         with result_placeholder.container():
-            st.info("📸 Upload an image or use camera to classify a sign language gesture (A-Z)")
+            st.info("Upload an image or use camera to classify a sign language gesture (A-Z)")
 
 if __name__ == "__main__":
     main()
